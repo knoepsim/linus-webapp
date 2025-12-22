@@ -1,4 +1,16 @@
-export default function Home() {
+import { fetchLatestVideo } from "./lib/youtube";
+
+const fallbackVideo = {
+  title: "Neuestes Interview",
+  firstParagraph:
+    "Teile mir den Link zum neuesten Video oder deine Kanal-ID mit, damit das aktuellste Interview automatisch eingebettet wird.",
+  embedUrl: "",
+  watchUrl: "https://www.youtube.com/@lifelinus",
+};
+
+export default async function Home() {
+  const latestVideo =
+    (await fetchLatestVideo(process.env.YOUTUBE_CHANNEL_ID)) ?? fallbackVideo;
   return (
     <div className="min-h-screen bg-white text-zinc-900">
       <header className="border-b border-zinc-100">
@@ -121,22 +133,19 @@ export default function Home() {
                 Neuestes YouTube-Video
               </p>
               <h3 className="text-3xl font-semibold text-zinc-900">
-                Heute treffe ich Acacio.
+                {latestVideo.title}
               </h3>
               <p className="text-base leading-relaxed text-zinc-600">
-                Acacio lebt mit einer Muskelerkrankung und nutzt einen
-                E-Rollstuhl. Er spricht offen über seinen Alltag, seine
-                Geschichte und die Rolle des E-Rollstuhl-Fußballs in seinem
-                Leben.
+                {latestVideo.firstParagraph}
               </p>
               <div className="space-y-2 text-sm text-zinc-500">
-                <p>• Länge: 24 Minuten</p>
-                <p>• Thema: Alltag, Selbstbestimmung, Sport</p>
+                <p>• Neues Video automatisch aus dem YouTube-Feed</p>
+                <p>• Erster Absatz aus der Videobeschreibung</p>
                 <p>• Veröffentlichung: jeden Monat ein neues Interview</p>
               </div>
               <a
                 className="inline-flex items-center rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
-                href="https://www.youtube.com/@lifelinus"
+                href={latestVideo.watchUrl}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -144,23 +153,35 @@ export default function Home() {
               </a>
             </div>
             <div className="flex flex-col gap-4">
-              <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#f4f4f5,_transparent_60%)]" />
-                <div className="relative z-10 flex flex-col items-center gap-3 text-center">
-                  <span className="rounded-full border border-zinc-200 px-4 py-1 text-xs uppercase tracking-[0.3em] text-zinc-400">
-                    Vorschau
-                  </span>
-                  <p className="text-lg font-semibold text-zinc-900">
-                    Interview-Teaser
-                  </p>
-                  <p className="text-sm text-zinc-500">
-                    Hier kann das aktuelle Video eingebettet werden.
-                  </p>
+              {latestVideo.embedUrl ? (
+                <div className="relative h-64 overflow-hidden rounded-2xl bg-white shadow-sm">
+                  <iframe
+                    className="h-full w-full"
+                    src={latestVideo.embedUrl}
+                    title={latestVideo.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
                 </div>
-              </div>
+              ) : (
+                <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#f4f4f5,_transparent_60%)]" />
+                  <div className="relative z-10 flex flex-col items-center gap-3 text-center">
+                    <span className="rounded-full border border-zinc-200 px-4 py-1 text-xs uppercase tracking-[0.3em] text-zinc-400">
+                      Vorschau
+                    </span>
+                    <p className="text-lg font-semibold text-zinc-900">
+                      Interview-Teaser
+                    </p>
+                    <p className="text-sm text-zinc-500">
+                      Hinterlege die Kanal-ID, um das neueste Video zu laden.
+                    </p>
+                  </div>
+                </div>
+              )}
               <p className="text-xs text-zinc-400">
-                Du hast ein Video oder Foto? Teile es mir und ich binde es hier
-                ein.
+                Trage deine YouTube-Kanal-ID in der Umgebung ein, damit das
+                aktuelle Video automatisch erscheint.
               </p>
             </div>
           </div>
