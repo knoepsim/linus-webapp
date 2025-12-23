@@ -16,32 +16,45 @@ interface VideoSectionProps {
 }
 
 export default function VideoSection({ video }: VideoSectionProps) {
+  console.log('🎥 VideoSection mounted with video data:', video);
+
   const [consentGiven, setConsentGiven] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   // Video ID aus embed URL extrahieren
   const getVideoId = (embedUrl: string) => {
     const match = embedUrl.match(/\/embed\/([a-zA-Z0-9_-]+)/);
+    console.log('🔍 Extracting video ID from:', embedUrl, 'Result:', match ? match[1] : null);
     return match ? match[1] : null;
   };
 
   const videoId = getVideoId(video.embedUrl);
   const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
 
+  console.log('📊 Video processing:', { videoId, thumbnailUrl, embedUrl: video.embedUrl });
+
   useEffect(() => {
+    console.log('🔄 VideoSection useEffect triggered');
     // Nach dem Mount den korrekten Consent-Status laden
     const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
+    console.log('🔒 Privacy consent status:', hasPrivacyConsent);
+
     if (hasPrivacyConsent) {
       const savedConsent = localStorage.getItem('youtube-consent');
+      console.log('📺 YouTube consent from localStorage:', savedConsent);
       setConsentGiven(savedConsent === 'true');
     }
     setMounted(true);
+    console.log('✅ VideoSection mounted successfully');
   }, []);
 
   // Zustimmung speichern (nur wenn Privacy-Zustimmung gegeben)
   const handleConsent = () => {
+    console.log('👆 Handle consent clicked');
     setConsentGiven(true);
     const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
+    console.log('💾 Saving consent, privacy consent:', hasPrivacyConsent);
+
     if (hasPrivacyConsent) {
       localStorage.setItem('youtube-consent', 'true');
     }
@@ -71,7 +84,9 @@ export default function VideoSection({ video }: VideoSectionProps) {
         </div>
         <div className="flex flex-col gap-4">
           {video.embedUrl && videoId ? (
-            mounted && consentGiven ? (
+            (() => {
+              console.log('🎬 Render decision:', { mounted, consentGiven, embedUrl: video.embedUrl, videoId });
+              return mounted && consentGiven ? (
               // YouTube Embed nach Zustimmung (nur nach Mount)
               <div className="relative h-64 overflow-hidden rounded-2xl bg-white shadow-lg shadow-black/10 dark:shadow-black/30">
                 <iframe
@@ -92,9 +107,15 @@ export default function VideoSection({ video }: VideoSectionProps) {
                     fill
                     className="object-cover"
                     onError={(e) => {
+                      console.log('❌ Thumbnail failed to load:', thumbnailUrl);
                       // Fallback zu default thumbnail falls maxresdefault nicht verfügbar
                       const target = e.target as HTMLImageElement;
-                      target.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                      const fallbackUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                      console.log('🔄 Trying fallback thumbnail:', fallbackUrl);
+                      target.src = fallbackUrl;
+                    }}
+                    onLoad={() => {
+                      console.log('✅ Thumbnail loaded successfully:', thumbnailUrl);
                     }}
                   />
                 )}
@@ -115,10 +136,14 @@ export default function VideoSection({ video }: VideoSectionProps) {
                   </div>
                 </div>
               </div>
-            )
+            );
+            })()
           ) : (
             // Fallback für fehlende Daten
-            <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg shadow-black/10 dark:shadow-black/30">
+            (() => {
+              console.log('🚫 VideoSection not rendered - missing embedUrl or videoId:', { embedUrl: video.embedUrl, videoId });
+              return (
+                <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg shadow-black/10 dark:shadow-black/30">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#f4f4f5,_transparent_60%)]" />
               <div className="relative z-10 flex flex-col items-center gap-3 text-center">
                 <span className="rounded-full border border-zinc-200 px-4 py-1 text-xs uppercase tracking-[0.3em] text-zinc-400">
@@ -133,6 +158,8 @@ export default function VideoSection({ video }: VideoSectionProps) {
                 </p>
               </div>
             </div>
+            );
+            })()
           )}
         </div>
       </div>

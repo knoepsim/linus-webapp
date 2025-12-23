@@ -57,21 +57,32 @@ const extractLink = (source: string) => {
 export const fetchLatestVideo = async (
   channelId?: string,
 ): Promise<LatestVideo | null> => {
+  console.log('🎥 fetchLatestVideo called with channelId:', channelId);
+
   if (!channelId) {
+    console.log('❌ No channelId provided');
     return null;
   }
 
   const feedUrl = `${FEED_BASE_URL}?channel_id=${channelId}`;
+  console.log('🔗 Fetching YouTube feed from:', feedUrl);
+
   const response = await fetch(feedUrl, { next: { revalidate: 3600 } });
+  console.log('📡 YouTube API response status:', response.status);
 
   if (!response.ok) {
+    console.log('❌ YouTube API request failed:', response.status, response.statusText);
     return null;
   }
 
   const xml = await response.text();
+  console.log('📄 XML response length:', xml.length);
+
   const entries = xml.match(/<entry>[\s\S]*?<\/entry>/g);
+  console.log('📋 Found entries:', entries?.length || 0);
 
   if (!entries || entries.length === 0) {
+    console.log('⚠️ No video entries found in XML');
     return null;
   }
 
@@ -84,7 +95,7 @@ export const fetchLatestVideo = async (
 
     // Exclude Shorts
     if (id && !isShortsVideo(title, description, link)) {
-      return {
+      const result = {
         id,
         title,
         description,
@@ -92,9 +103,12 @@ export const fetchLatestVideo = async (
         embedUrl: `https://www.youtube.com/embed/${id}`,
         watchUrl: `https://www.youtube.com/watch?v=${id}`,
       };
+      console.log('✅ Found valid video:', { id, title, embedUrl: result.embedUrl });
+      return result;
     }
   }
 
+  console.log('❌ No valid video found after filtering Shorts');
   return null;
 };
 

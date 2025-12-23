@@ -15,8 +15,13 @@ const fallbackVideo = {
 };
 
 export default async function Home() {
+  console.log('🏠 Home page rendering');
+  console.log('🔑 YouTube Channel ID from env:', process.env.YOUTUBE_CHANNEL_ID);
+
   const latestVideo =
     (await fetchLatestVideo(process.env.YOUTUBE_CHANNEL_ID)) ?? fallbackVideo;
+
+  console.log('📺 Latest video result:', latestVideo);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
