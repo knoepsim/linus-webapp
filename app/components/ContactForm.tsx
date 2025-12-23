@@ -8,6 +8,7 @@ const contactSchema = z.object({
   name: z.string().min(2, 'Name muss mindestens 2 Zeichen lang sein'),
   email: z.string().email('Ungültige E-Mail-Adresse'),
   message: z.string().min(10, 'Nachricht muss mindestens 10 Zeichen lang sein'),
+  privacyConsent: z.boolean().refine(val => val === true, 'Du musst der Datenschutzerklärung zustimmen'),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -17,6 +18,7 @@ export default function ContactForm() {
     name: '',
     email: '',
     message: '',
+    privacyConsent: false,
   });
   const [errors, setErrors] = useState<Partial<ContactFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,8 +28,10 @@ export default function ContactForm() {
   }>({ type: null, message: '' });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    const inputValue = type === 'checkbox' ? checked : value;
+
+    setFormData(prev => ({ ...prev, [name]: inputValue }));
 
     // Clear error for this field when user starts typing
     if (errors[name as keyof ContactFormData]) {
@@ -62,7 +66,7 @@ export default function ContactForm() {
           message: 'Vielen Dank! Deine Nachricht wurde erfolgreich gesendet.',
         });
         // Reset form
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ name: '', email: '', message: '', privacyConsent: false });
       } else {
         if (result.errors) {
           // Handle validation errors from server
@@ -81,11 +85,12 @@ export default function ContactForm() {
     } catch (error) {
       if (error instanceof z.ZodError) {
         // Handle client-side validation errors
-        const fieldErrors: Partial<ContactFormData> = {};
+        const fieldErrors: Record<string, string> = {};
         error.issues.forEach((err) => {
-          fieldErrors[err.path[0] as keyof ContactFormData] = err.message;
+          const fieldName = err.path[0] as string;
+          fieldErrors[fieldName] = err.message;
         });
-        setErrors(fieldErrors);
+        setErrors(fieldErrors as Partial<ContactFormData>);
       } else {
         setSubmitStatus({
           type: 'error',
@@ -147,6 +152,32 @@ export default function ContactForm() {
         />
         {errors.message && (
           <p className="mt-1 text-sm text-destructive">{errors.message}</p>
+        )}
+      </div>
+
+      {/* Datenschutzhinweise */}
+      <div className="space-y-3">
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            name="privacyConsent"
+            checked={formData.privacyConsent}
+            onChange={handleInputChange}
+            className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+            disabled={isSubmitting}
+          />
+          <div className="text-sm">
+            <label htmlFor="privacyConsent" className="text-muted-foreground">
+              Ich stimme der Verarbeitung meiner Daten gemäß der{' '}
+              <a href="/datenschutz" className="text-primary hover:underline" target="_blank">
+                Datenschutzerklärung
+              </a>{' '}
+              zu. Meine Daten werden ausschließlich zur Bearbeitung meiner Anfrage verwendet und nicht an Dritte weitergegeben.
+            </label>
+          </div>
+        </div>
+        {errors.privacyConsent && (
+          <p className="text-sm text-destructive">{errors.privacyConsent}</p>
         )}
       </div>
 

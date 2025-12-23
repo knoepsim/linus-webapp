@@ -28,11 +28,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Get stored theme or default to light
-    const storedTheme = localStorage.getItem('theme') as Theme | null;
+    // Prüfen, ob Privacy-Zustimmung gegeben wurde
+    const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
+
+    // Get stored theme only if privacy consent is given
+    const storedTheme = hasPrivacyConsent ? (localStorage.getItem('theme') as Theme | null) : null;
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // Priority: 1. localStorage, 2. prefers-color-scheme, 3. light
+    // Priority: 1. localStorage (if consent given), 2. prefers-color-scheme, 3. light
     const initialTheme = storedTheme || (prefersDark ? 'dark' : 'light');
 
     setTheme(initialTheme);
@@ -43,8 +46,13 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
+
+    // Only save to localStorage if privacy consent is given
+    const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
+    if (hasPrivacyConsent) {
+      localStorage.setItem('theme', newTheme);
+    }
   };
 
   const value = {
