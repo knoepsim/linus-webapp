@@ -7,10 +7,7 @@ export default function Footer() {
           <a className="transition hover:text-foreground" href="mailto:kontakt@lifelinus.de">
             kontakt@lifelinus.de
           </a>
-          <a className="transition hover:text-foreground" href="#social">
-            Social Links
-          </a>
-          <a className="transition hover:text-foreground" href="/impressum">
+          <a className="transition hover:text-foreground" href="https://www.ng-influence.de/impressum">
             Impressum
           </a>
         </div>
