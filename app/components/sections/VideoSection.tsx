@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Play } from 'lucide-react';
+import Image from 'next/image';
 
 interface VideoData {
   title: string;
@@ -85,10 +86,11 @@ export default function VideoSection({ video }: VideoSectionProps) {
               // Thumbnail mit Play-Button (immer während SSR und wenn keine Zustimmung)
               <div className="relative h-64 overflow-hidden rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30 cursor-pointer group" onClick={handleConsent}>
                 {thumbnailUrl && (
-                  <img
+                  <Image
                     src={thumbnailUrl}
                     alt={video.title}
-                    className="h-full w-full object-cover"
+                    fill
+                    className="object-cover"
                     onError={(e) => {
                       // Fallback zu default thumbnail falls maxresdefault nicht verfügbar
                       const target = e.target as HTMLImageElement;

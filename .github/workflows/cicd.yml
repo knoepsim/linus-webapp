@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -37,8 +37,10 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: Validate docker-compose
-        run: docker-compose config --quiet
+      - name: Validate docker-compose files
+        run: |
+          docker compose -f docker-compose.yml config --quiet
+          docker compose -f docker-compose.local.yml config --quiet
 
   build-and-push:
     runs-on: ubuntu-latest

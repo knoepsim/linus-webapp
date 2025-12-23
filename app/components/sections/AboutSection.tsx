@@ -1,10 +1,14 @@
+import Image from 'next/image';
+
 export default function AboutSection() {
   return (
     <section id="about" className="grid gap-10 md:grid-cols-[0.8fr_1.2fr]">
       <div className="flex justify-center">
-        <img
+        <Image
           src="/linus.png"
           alt="Linus"
+          width={320}
+          height={320}
           className="h-80 rounded-3xl object-cover shadow-lg"
         />
       </div>
