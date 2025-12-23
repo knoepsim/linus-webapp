@@ -30,7 +30,6 @@ const extractFirstParagraph = (description: string) => {
 const extractTag = (source: string, tag: string) => {
   const match = source.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`));
   if (!match) {
-    console.log(`Tag <${tag}> not found in entry.`);
     return "";
   }
   return decodeXmlEntities(match[1].trim());
@@ -51,7 +50,6 @@ const isShortsVideo = (title: string, description: string, link: string) => {
 const extractDuration = (source: string) => {
   const durationTag = source.match(/<media:duration\s+seconds="(\d+)"/);
   if (!durationTag) {
-    console.log("No duration tag found in entry:", source);
     return null;
   }
   return parseInt(durationTag[1], 10);
@@ -59,7 +57,6 @@ const extractDuration = (source: string) => {
 const extractLink = (source: string) => {
   const linkMatch = source.match(/<link[^>]*href="([^"]*)"/);
   if (!linkMatch) {
-    console.log("No link href found in entry.");
     return "";
   }
   return linkMatch[1];
@@ -68,7 +65,6 @@ export const fetchLatestVideo = async (
   channelId?: string,
 ): Promise<LatestVideo | null> => {
   if (!channelId) {
-    console.log("No channel ID provided.");
     return null;
   }
 
@@ -76,18 +72,13 @@ export const fetchLatestVideo = async (
   const response = await fetch(feedUrl, { next: { revalidate: 3600 } });
 
   if (!response.ok) {
-    console.log("Failed to fetch feed:", response.status, response.statusText);
     return null;
   }
 
   const xml = await response.text();
   const entries = xml.match(/<entry>[\s\S]*?<\/entry>/g);
 
-  console.log("Fetched raw XML feed:", xml);
-  console.log(`Found ${entries ? entries.length : 0} entries in the feed.`);
-
   if (!entries || entries.length === 0) {
-    console.log("No entries found in the feed.");
     return null;
   }
 
@@ -98,11 +89,8 @@ export const fetchLatestVideo = async (
     const link = extractLink(entry);
     const firstParagraph = extractFirstParagraph(description);
 
-    console.log("Checking video:", { id, title, link });
-
     // Exclude Shorts
     if (id && !isShortsVideo(title, description, link)) {
-      console.log("Video selected:", { id, title });
       return {
         id,
         title,
@@ -112,11 +100,8 @@ export const fetchLatestVideo = async (
         watchUrl: `https://www.youtube.com/watch?v=${id}`,
       };
     }
-
-    console.log("Video excluded:", { id, title, link });
   }
 
-  console.log("No suitable video found.");
   return null;
 };
 
@@ -124,7 +109,6 @@ export const fetchLatestVideos = async (
   channelId?: string,
 ): Promise<void> => {
   if (!channelId) {
-    console.log("No channel ID provided.");
     return;
   }
 
@@ -132,35 +116,20 @@ export const fetchLatestVideos = async (
   const response = await fetch(feedUrl, { next: { revalidate: 3600 } });
 
   if (!response.ok) {
-    console.log("Failed to fetch feed:", response.status, response.statusText);
     return;
   }
 
   const xml = await response.text();
-  console.log("Fetched raw XML feed:", xml);
-
   const entries = xml.match(/<entry>[\s\S]*?<\/entry>/g);
 
   if (!entries || entries.length === 0) {
-    console.log("No entries found in the feed.");
     return;
   }
-
-  console.log(`Found ${entries.length} entries in the feed.`);
 
   entries.forEach((entry, index) => {
     const id = extractTag(entry, "yt:videoId");
     const title = extractTag(entry, "title");
     const description = extractTag(entry, "media:description");
     const link = extractLink(entry);
-
-    console.log(`Entry ${index + 1}:`, {
-      id,
-      title,
-      description,
-      link,
-    });
   });
-
-  console.log("All entries have been logged. Returning fallback.");
 };
