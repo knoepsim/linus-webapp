@@ -34,6 +34,23 @@ services:
         reservations:
           memory: 256M
 
+  # Watchtower für automatische Container-Updates
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: linus-watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_POLL_INTERVAL=60  # Prüft alle 60 Sekunden auf Updates
+      - WATCHTOWER_CLEANUP=true      # Entfernt alte Images nach Update
+      - WATCHTOWER_INCLUDE_STOPPED=false  # Nur laufende Container aktualisieren
+      - WATCHTOWER_REVIVE_STOPPED=false   # Gestoppte Container nicht starten
+      - WATCHTOWER_LABEL_ENABLE=true      # Nur Container mit Label aktualisieren
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    command: --interval 60 --label-enable --cleanup
+
 # Optional: Wenn du Traefik als Reverse Proxy verwendest
 # networks:
 #   web:
