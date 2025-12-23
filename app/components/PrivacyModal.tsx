@@ -5,23 +5,19 @@ import { X } from 'lucide-react';
 
 export default function PrivacyModal() {
   const [isVisible, setIsVisible] = useState(false);
-  const [hasConsent, setHasConsent] = useState(false);
 
   useEffect(() => {
     // Prüfen, ob bereits zugestimmt wurde
     const consent = localStorage.getItem('privacy-consent');
-    if (!consent) {
+    if (consent !== 'true') {
       // Modal nach kurzer Verzögerung anzeigen
       const timer = setTimeout(() => setIsVisible(true), 1000);
       return () => clearTimeout(timer);
-    } else {
-      setHasConsent(true);
     }
   }, []);
 
   const handleAccept = () => {
     localStorage.setItem('privacy-consent', 'true');
-    setHasConsent(true);
     setIsVisible(false);
   };
 
@@ -31,7 +27,7 @@ export default function PrivacyModal() {
     setIsVisible(false);
   };
 
-  if (!isVisible || hasConsent) return null;
+  if (!isVisible) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">

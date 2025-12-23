@@ -24,26 +24,25 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>('light');
   const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<Theme>('light'); // Always start with 'light' for SSR consistency
 
   useEffect(() => {
-    // Prüfen, ob Privacy-Zustimmung gegeben wurde
-    const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
+    setMounted(true);
 
-    // Get stored theme only if privacy consent is given
+    // Initialize theme based on localStorage and system preference after mount
+    const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
     const storedTheme = hasPrivacyConsent ? (localStorage.getItem('theme') as Theme | null) : null;
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // Priority: 1. localStorage (if consent given), 2. prefers-color-scheme, 3. light
     const initialTheme = storedTheme || (prefersDark ? 'dark' : 'light');
-
     setTheme(initialTheme);
     document.documentElement.setAttribute('data-theme', initialTheme);
-    setMounted(true);
   }, []);
 
   const toggleTheme = () => {
+    if (!mounted) return; // Prevent toggling before mount
+
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);

@@ -47,13 +47,6 @@ const isShortsVideo = (title: string, description: string, link: string) => {
   );
 };
 
-const extractDuration = (source: string) => {
-  const durationTag = source.match(/<media:duration\s+seconds="(\d+)"/);
-  if (!durationTag) {
-    return null;
-  }
-  return parseInt(durationTag[1], 10);
-};
 const extractLink = (source: string) => {
   const linkMatch = source.match(/<link[^>]*href="([^"]*)"/);
   if (!linkMatch) {
@@ -126,10 +119,7 @@ export const fetchLatestVideos = async (
     return;
   }
 
-  entries.forEach((entry, index) => {
-    const id = extractTag(entry, "yt:videoId");
-    const title = extractTag(entry, "title");
-    const description = extractTag(entry, "media:description");
-    const link = extractLink(entry);
+  entries.forEach(() => {
+    // Diese Daten werden nicht mehr benötigt, da wir nur das neueste Video zurückgeben
   });
 };

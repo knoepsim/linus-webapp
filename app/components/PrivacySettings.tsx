@@ -11,7 +11,7 @@ export default function PrivacySettings() {
   });
   const [showValues, setShowValues] = useState(false);
 
-  useEffect(() => {
+  const updateSettings = () => {
     // Aktuelle localStorage-Werte laden
     const privacyConsent = localStorage.getItem('privacy-consent');
     const theme = localStorage.getItem('theme');
@@ -22,20 +22,20 @@ export default function PrivacySettings() {
       'theme': !!theme,
       'youtube-consent': !!youtubeConsent,
     });
+  };
+
+  useEffect(() => {
+    updateSettings();
   }, []);
 
   const deleteItem = (key: string) => {
     localStorage.removeItem(key);
-    setSettings(prev => ({ ...prev, [key]: false }));
+    updateSettings();
   };
 
   const deleteAll = () => {
     localStorage.clear();
-    setSettings({
-      'privacy-consent': false,
-      'theme': false,
-      'youtube-consent': false,
-    });
+    updateSettings();
   };
 
   const getValue = (key: string) => {

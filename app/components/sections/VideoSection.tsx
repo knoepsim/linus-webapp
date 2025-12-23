@@ -16,6 +16,7 @@ interface VideoSectionProps {
 
 export default function VideoSection({ video }: VideoSectionProps) {
   const [consentGiven, setConsentGiven] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // Video ID aus embed URL extrahieren
   const getVideoId = (embedUrl: string) => {
@@ -26,15 +27,14 @@ export default function VideoSection({ video }: VideoSectionProps) {
   const videoId = getVideoId(video.embedUrl);
   const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
 
-  // Zustimmung aus localStorage laden (nur wenn Privacy-Zustimmung gegeben)
   useEffect(() => {
+    // Nach dem Mount den korrekten Consent-Status laden
     const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
     if (hasPrivacyConsent) {
       const savedConsent = localStorage.getItem('youtube-consent');
-      if (savedConsent === 'true') {
-        setConsentGiven(true);
-      }
+      setConsentGiven(savedConsent === 'true');
     }
+    setMounted(true);
   }, []);
 
   // Zustimmung speichern (nur wenn Privacy-Zustimmung gegeben)
@@ -70,8 +70,8 @@ export default function VideoSection({ video }: VideoSectionProps) {
         </div>
         <div className="flex flex-col gap-4">
           {video.embedUrl && videoId ? (
-            consentGiven ? (
-              // YouTube Embed nach Zustimmung
+            mounted && consentGiven ? (
+              // YouTube Embed nach Zustimmung (nur nach Mount)
               <div className="relative h-64 overflow-hidden rounded-2xl bg-white shadow-lg shadow-black/10 dark:shadow-black/30">
                 <iframe
                   className="h-full w-full"
@@ -82,7 +82,7 @@ export default function VideoSection({ video }: VideoSectionProps) {
                 />
               </div>
             ) : (
-              // Thumbnail mit Play-Button und Zustimmungsaufforderung
+              // Thumbnail mit Play-Button (immer während SSR und wenn keine Zustimmung)
               <div className="relative h-64 overflow-hidden rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30 cursor-pointer group" onClick={handleConsent}>
                 {thumbnailUrl && (
                   <img

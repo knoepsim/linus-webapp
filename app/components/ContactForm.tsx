@@ -70,11 +70,12 @@ export default function ContactForm() {
       } else {
         if (result.errors) {
           // Handle validation errors from server
-          const fieldErrors: Partial<ContactFormData> = {};
-          result.errors.forEach((error: any) => {
-            fieldErrors[error.path[0] as keyof ContactFormData] = error.message;
+          const fieldErrors: Record<string, string> = {};
+          result.errors.forEach((error: { path: (string | number)[]; message: string }) => {
+            const fieldName = error.path[0] as string;
+            fieldErrors[fieldName] = error.message;
           });
-          setErrors(fieldErrors);
+          setErrors(fieldErrors as Partial<ContactFormData>);
         } else {
           setSubmitStatus({
             type: 'error',

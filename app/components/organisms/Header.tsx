@@ -1,28 +1,29 @@
 import { Mail } from "lucide-react";
+import Link from "next/link";
 import ThemeToggle from "../ThemeToggle";
 
 export default function Header() {
     return (
         <header className="border-b border-border">
             <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
-                <a href="/">
+                <Link href="/">
                     <div>
                         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
                             Lifelinus
                         </p>
                         <h1 className="text-2xl font-semibold text-foreground">Linus</h1>
                     </div>
-                </a>
+                </Link>
                 <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-                    <a className="transition hover:text-foreground" href="/#video">
+                    <Link className="transition hover:text-foreground" href="/#video">
                         Neues Video
-                    </a>
-                    <a className="transition hover:text-foreground" href="/#about">
+                    </Link>
+                    <Link className="transition hover:text-foreground" href="/#about">
                         Über Linus
-                    </a>
-                    <a className="transition hover:text-foreground" href="/#social">
+                    </Link>
+                    <Link className="transition hover:text-foreground" href="/#social">
                         Social Media
-                    </a>
+                    </Link>
                 </nav>
                 <div className="flex items-center gap-4">
                     <a
