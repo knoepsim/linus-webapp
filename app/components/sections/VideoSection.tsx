@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Play } from 'lucide-react';
 import Image from 'next/image';
+import { fetchLatestVideo } from '../../lib/youtube';
 
 interface VideoData {
   title: string;
@@ -12,12 +13,19 @@ interface VideoData {
 }
 
 interface VideoSectionProps {
-  video: VideoData;
+  video: VideoData | null;
 }
 
-export default function VideoSection({ video }: VideoSectionProps) {
-  console.log('🎥 VideoSection mounted with video data:', video);
+const fallbackVideo = {
+  title: "Neuestes Video",
+  firstParagraph:
+    "Ein Fehler ist beim Laden aufgetreten.",
+  embedUrl: "",
+  watchUrl: "https://www.youtube.com/@lifelinus",
+};
 
+export default function VideoSection({ video: initialVideo }: VideoSectionProps) {
+  const [video, setVideo] = useState<VideoData>(initialVideo || fallbackVideo);
   const [consentGiven, setConsentGiven] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -33,8 +41,40 @@ export default function VideoSection({ video }: VideoSectionProps) {
 
   console.log('📊 Video processing:', { videoId, thumbnailUrl, embedUrl: video.embedUrl });
 
+  // Client-seitiges Laden der YouTube Daten
   useEffect(() => {
     console.log('🔄 VideoSection useEffect triggered');
+
+    const loadVideoData = async () => {
+      if (initialVideo) {
+        console.log('✅ Using provided video data:', initialVideo);
+        setVideo(initialVideo);
+        return;
+      }
+
+      console.log('🎥 Loading video data client-side');
+      try {
+        const channelId = process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_ID || 'UCpgCXddJZbfRCvzyHy4cdSQ';
+        console.log('🔑 Client-side channel ID:', channelId);
+
+        const latestVideo = await fetchLatestVideo(channelId);
+        if (latestVideo) {
+          console.log('📺 Client-side video loaded:', latestVideo);
+          setVideo(latestVideo);
+        } else {
+          console.log('⚠️ No video data received, using fallback');
+          setVideo(fallbackVideo);
+        }
+      } catch (error) {
+        console.error('❌ Error loading video data:', error);
+        setVideo(fallbackVideo);
+      }
+    };
+
+    loadVideoData();
+  }, [initialVideo]);
+
+  useEffect(() => {
     // Nach dem Mount den korrekten Consent-Status laden
     const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
     console.log('🔒 Privacy consent status:', hasPrivacyConsent);

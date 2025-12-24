@@ -18,16 +18,15 @@ export default async function Home() {
   console.log('🏠 Home page rendering');
   console.log('🔑 YouTube Channel ID from env:', process.env.YOUTUBE_CHANNEL_ID);
 
-  const latestVideo =
-    (await fetchLatestVideo(process.env.YOUTUBE_CHANNEL_ID)) ?? fallbackVideo;
+  // Für ISR: Verwende initial leere Daten, die client-seitig geladen werden
+  const initialVideo = null;
 
-  console.log('📺 Latest video result:', latestVideo);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-6 py-16">
-        <VideoSection video={latestVideo} />
+        <VideoSection video={initialVideo} />
         <AboutSection />
         <SocialSection />
         <ContactSection />
@@ -37,3 +36,6 @@ export default async function Home() {
     </div>
   );
 }
+
+// ISR: Regeneriere die Seite alle 60 Minuten (aber VideoSection lädt client-seitig)
+export const revalidate = 3600;
