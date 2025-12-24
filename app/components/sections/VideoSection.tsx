@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Play } from 'lucide-react';
 import Image from 'next/image';
-import { fetchLatestVideo } from '../../lib/youtube';
 
 interface VideoData {
   title: string;
@@ -52,17 +51,22 @@ export default function VideoSection({ video: initialVideo }: VideoSectionProps)
         return;
       }
 
-      console.log('🎥 Loading video data client-side');
+      console.log('🎥 Loading video data client-side via API route');
       try {
-        const channelId = process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_ID || 'UCpgCXddJZbfRCvzyHy4cdSQ';
-        console.log('🔑 Client-side channel ID:', channelId);
+        const response = await fetch('/api/youtube/latest');
+        console.log('📡 API response status:', response.status);
 
-        const latestVideo = await fetchLatestVideo(channelId);
-        if (latestVideo) {
-          console.log('📺 Client-side video loaded:', latestVideo);
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.status}`);
+        }
+
+        const latestVideo = await response.json();
+        console.log('📺 Client-side video loaded:', latestVideo);
+
+        if (latestVideo && latestVideo.embedUrl) {
           setVideo(latestVideo);
         } else {
-          console.log('⚠️ No video data received, using fallback');
+          console.log('⚠️ Invalid video data received, using fallback');
           setVideo(fallbackVideo);
         }
       } catch (error) {
