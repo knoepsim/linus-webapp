@@ -15,9 +15,6 @@ const fallbackVideo = {
 };
 
 export default async function Home() {
-  console.log('🏠 Home page rendering');
-  console.log('🔑 YouTube Channel ID from env:', process.env.YOUTUBE_CHANNEL_ID);
-
   // Für ISR: Verwende initial leere Daten, die client-seitig geladen werden
   const initialVideo = null;
 

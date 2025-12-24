@@ -31,46 +31,36 @@ export default function VideoSection({ video: initialVideo }: VideoSectionProps)
   // Video ID aus embed URL extrahieren
   const getVideoId = (embedUrl: string) => {
     const match = embedUrl.match(/\/embed\/([a-zA-Z0-9_-]+)/);
-    console.log('🔍 Extracting video ID from:', embedUrl, 'Result:', match ? match[1] : null);
     return match ? match[1] : null;
   };
 
   const videoId = getVideoId(video.embedUrl);
   const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
 
-  console.log('📊 Video processing:', { videoId, thumbnailUrl, embedUrl: video.embedUrl });
-
   // Client-seitiges Laden der YouTube Daten
   useEffect(() => {
-    console.log('🔄 VideoSection useEffect triggered');
-
     const loadVideoData = async () => {
       if (initialVideo) {
-        console.log('✅ Using provided video data:', initialVideo);
         setVideo(initialVideo);
         return;
       }
 
-      console.log('🎥 Loading video data client-side via API route');
       try {
         const response = await fetch('/api/youtube/latest');
-        console.log('📡 API response status:', response.status);
 
         if (!response.ok) {
           throw new Error(`API request failed: ${response.status}`);
         }
 
         const latestVideo = await response.json();
-        console.log('📺 Client-side video loaded:', latestVideo);
 
         if (latestVideo && latestVideo.embedUrl) {
           setVideo(latestVideo);
         } else {
-          console.log('⚠️ Invalid video data received, using fallback');
           setVideo(fallbackVideo);
         }
       } catch (error) {
-        console.error('❌ Error loading video data:', error);
+        console.error('Error loading video data:', error);
         setVideo(fallbackVideo);
       }
     };
@@ -81,23 +71,18 @@ export default function VideoSection({ video: initialVideo }: VideoSectionProps)
   useEffect(() => {
     // Nach dem Mount den korrekten Consent-Status laden
     const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
-    console.log('🔒 Privacy consent status:', hasPrivacyConsent);
 
     if (hasPrivacyConsent) {
       const savedConsent = localStorage.getItem('youtube-consent');
-      console.log('📺 YouTube consent from localStorage:', savedConsent);
       setConsentGiven(savedConsent === 'true');
     }
     setMounted(true);
-    console.log('✅ VideoSection mounted successfully');
   }, []);
 
   // Zustimmung speichern (nur wenn Privacy-Zustimmung gegeben)
   const handleConsent = () => {
-    console.log('👆 Handle consent clicked');
     setConsentGiven(true);
     const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
-    console.log('💾 Saving consent, privacy consent:', hasPrivacyConsent);
 
     if (hasPrivacyConsent) {
       localStorage.setItem('youtube-consent', 'true');
@@ -129,7 +114,6 @@ export default function VideoSection({ video: initialVideo }: VideoSectionProps)
         <div className="flex flex-col gap-4">
           {video.embedUrl && videoId ? (
             (() => {
-              console.log('🎬 Render decision:', { mounted, consentGiven, embedUrl: video.embedUrl, videoId });
               return mounted && consentGiven ? (
               // YouTube Embed nach Zustimmung (nur nach Mount)
               <div className="relative h-64 overflow-hidden rounded-2xl bg-white shadow-lg shadow-black/10 dark:shadow-black/30">
@@ -151,15 +135,10 @@ export default function VideoSection({ video: initialVideo }: VideoSectionProps)
                     fill
                     className="object-cover"
                     onError={(e) => {
-                      console.log('❌ Thumbnail failed to load:', thumbnailUrl);
                       // Fallback zu default thumbnail falls maxresdefault nicht verfügbar
                       const target = e.target as HTMLImageElement;
                       const fallbackUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-                      console.log('🔄 Trying fallback thumbnail:', fallbackUrl);
                       target.src = fallbackUrl;
-                    }}
-                    onLoad={() => {
-                      console.log('✅ Thumbnail loaded successfully:', thumbnailUrl);
                     }}
                   />
                 )}
@@ -185,7 +164,6 @@ export default function VideoSection({ video: initialVideo }: VideoSectionProps)
           ) : (
             // Fallback für fehlende Daten
             (() => {
-              console.log('🚫 VideoSection not rendered - missing embedUrl or videoId:', { embedUrl: video.embedUrl, videoId });
               return (
                 <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg shadow-black/10 dark:shadow-black/30">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#f4f4f5,_transparent_60%)]" />
