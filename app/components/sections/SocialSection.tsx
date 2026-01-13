@@ -1,4 +1,4 @@
-import { Instagram, Youtube, Video, Twitch } from "lucide-react";
+import { siYoutube, siInstagram, siTiktok, siTwitch } from "simple-icons";
 
 export default function SocialSection() {
     return (
@@ -17,33 +17,45 @@ export default function SocialSection() {
             <div className="grid gap-6 md:grid-cols-3">
                 {[
                     {
-                        "title": "Instagram",
+                        "title": "@einblickmitlinus",
+                        "text": "Authentische Geschichten & Interviews",
+                        "link": "https://www.youtube.com/@einblickmitlinus",
+                        "icon": siYoutube
+                    },
+                    {
+                        "title": "@einblickmitlinus",
                         "text": "Stories aus meinem Leben",
-                        "link": "https://www.instagram.com/lifelinus/",
-                        "icon": Instagram
+                        "link": "https://www.instagram.com/einblickmitlinus/",
+                        "icon": siInstagram
                     },
                     {
-                        "title": "TikTok",
-                        "text": "Kurze Clips und schnelle Einblick.",
-                        "link": "https://www.tiktok.com/@lifelinus",
-                        "icon": Video
-                    },
-                    {
-                        "title": "YouTube",
+                        "title": "@lifelinus",
                         "text": "Längere Videos auf dem YouTube-Kanal",
                         "link": "https://www.youtube.com/@lifelinus",
-                        "icon": Youtube
+                        "icon": siYoutube
                     },
                     {
-                        "title": "Twitch",
+                        "title": "@lifelinus",
+                        "text": "Stories aus meinem Leben",
+                        "link": "https://www.instagram.com/lifelinus/",
+                        "icon": siInstagram
+                    },
+                    {
+                        "title": "@lifelinus",
+                        "text": "Kurze Clips und schnelle Einblick.",
+                        "link": "https://www.tiktok.com/@lifelinus",
+                        "icon": siTiktok
+                    },
+                    {
+                        "title": "@lifelinus",
                         "text": "Livestreams und Gaming-Sessions",
                         "link": "https://www.twitch.tv/lifelinus",
-                        "icon": Twitch
+                        "icon": siTwitch
                     },
                 ].map((item) => (
                     <a
                         href={item.link}
-                        key={item.title}
+                        key={item.link}
 
                     >
                         <div
@@ -51,7 +63,13 @@ export default function SocialSection() {
                         >
                             <div>
                                 <div className="flex items-center gap-3 mb-2">
-                                    <item.icon className="h-6 w-6" />
+                                    <svg
+                                        className="h-6 w-6"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path d={item.icon.path} />
+                                    </svg>
                                     <p className="text-lg font-semibold text-card-foreground">
                                         {item.title}
                                     </p>

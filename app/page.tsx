@@ -1,6 +1,7 @@
 import { fetchLatestVideo } from "./lib/youtube";
 import Header from "./components/organisms/Header";
 import VideoSection from "./components/sections/VideoSection";
+import NewsSection from "./components/sections/NewsSection";
 import AboutSection from "./components/sections/AboutSection";
 import SocialSection from "./components/sections/SocialSection";
 import ContactSection from "./components/sections/ContactSection";
@@ -23,6 +24,7 @@ export default async function Home() {
       <Header />
 
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-6 py-16">
+        <NewsSection />
         <VideoSection video={initialVideo} />
         <AboutSection />
         <SocialSection />

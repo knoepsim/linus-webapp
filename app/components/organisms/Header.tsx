@@ -18,6 +18,9 @@ export default function Header() {
                     <Link className="transition hover:text-foreground" href="/#video">
                         Neues Video
                     </Link>
+                    <Link className="transition hover:text-foreground" href="/#news">
+                        Neuer Kanal
+                    </Link>
                     <Link className="transition hover:text-foreground" href="/#about">
                         Über Linus
                     </Link>
