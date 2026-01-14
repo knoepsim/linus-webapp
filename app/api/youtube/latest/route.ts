@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   try {
     // Channel ID aus Query-Parametern oder Environment-Variable
     const { searchParams } = new URL(request.url);
-    const channelId = searchParams.get('channelId') || process.env.YOUTUBE_CHANNEL_ID;
+    const channelId = searchParams.get('channelId');
 
     if (!channelId) {
       console.error('No channelId provided');

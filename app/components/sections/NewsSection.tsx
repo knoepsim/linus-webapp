@@ -46,7 +46,7 @@ export default function NewsSection({ video: initialVideo }: NewsSectionProps) {
 
             try {
                 // Verwende die bestehende API-Route mit Query-Parameter für den neuen Kanal
-                const newChannelId = process.env.NEXT_PUBLIC_NEW_YOUTUBE_CHANNEL_ID || 'UC_placeholder_new_channel';
+                const newChannelId = 'UCxyCFrHaZyegZ-itO4u-Vgg';
                 const response = await fetch(`/api/youtube/latest?channelId=${newChannelId}`);
 
                 if (!response.ok) {
@@ -91,7 +91,7 @@ export default function NewsSection({ video: initialVideo }: NewsSectionProps) {
 
     return (
         <section id="news" className="rounded-3xl border border-border/20 bg-card/50 backdrop-blur-sm shadow-xl shadow-black/5 dark:shadow-black/20 p-10 transition-all duration-200 hover:shadow-2xl hover:shadow-black/10 dark:hover:shadow-black/30">
-            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] mb-10">
+            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center mb-6">
                 {/* Linke Spalte: Informationen über den neuen Kanal */}
                 <div className="space-y-6">
                     <div className="flex items-center gap-3">
@@ -154,7 +154,8 @@ export default function NewsSection({ video: initialVideo }: NewsSectionProps) {
 
 
             </div>
-            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] mt-10">
+            <hr className='text-muted-foreground/10'/>
+            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] items-center mt-6">
 
 
                 {/* Rechte Spalte: Neuestes Video vom neuen Kanal */}
@@ -269,3 +270,4 @@ export default function NewsSection({ video: initialVideo }: NewsSectionProps) {
         </section>
     );
 }
+5

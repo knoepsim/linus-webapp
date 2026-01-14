@@ -46,7 +46,7 @@ export default function VideoSection({ video: initialVideo }: VideoSectionProps)
             }
 
             try {
-                const response = await fetch('/api/youtube/latest');
+                const response = await fetch('/api/youtube/latest?channelId=UCpgCXddJZbfRCvzyHy4cdSQ');
 
                 if (!response.ok) {
                     throw new Error(`API request failed: ${response.status}`);
@@ -91,7 +91,7 @@ export default function VideoSection({ video: initialVideo }: VideoSectionProps)
 
     return (
         <section className="rounded-3xl border border-border/20 bg-card/50 backdrop-blur-sm shadow-xl shadow-black/5 dark:shadow-black/20 p-10 transition-all duration-200 hover:shadow-2xl hover:shadow-black/10 dark:hover:shadow-black/30">
-            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center">
                 <div className="space-y-6">
                     <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
                         Neuestes @lifelinus YouTube-Video
