@@ -73,7 +73,7 @@ export default function NewsSection({ video: initialVideo }: NewsSectionProps) {
         const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
 
         if (hasPrivacyConsent) {
-            const savedConsent = localStorage.getItem('youtube-consent-new-channel');
+            const savedConsent = localStorage.getItem('youtube-consent');
             setConsentGiven(savedConsent === 'true');
         }
         setMounted(true);
@@ -85,7 +85,7 @@ export default function NewsSection({ video: initialVideo }: NewsSectionProps) {
         const hasPrivacyConsent = localStorage.getItem('privacy-consent') === 'true';
 
         if (hasPrivacyConsent) {
-            localStorage.setItem('youtube-consent-new-channel', 'true');
+            localStorage.setItem('youtube-consent', 'true');
         }
     };
 

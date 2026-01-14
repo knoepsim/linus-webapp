@@ -186,8 +186,7 @@ export default function VideoSection({ video: initialVideo }: VideoSectionProps)
                                             neuestes Video
                                         </p>
                                         <p className="text-sm text-zinc-500">
-                                            Hier wird normalerweise das neueste YouTube-Video
-                                            angezeigt.
+                                            Hier wird bald das neueste Video vom Kanal angezeigt.
                                         </p>
                                     </div>
                                 </div>
